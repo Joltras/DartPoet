@@ -8,4 +8,7 @@ internal const val NULL_STRING = "null"
 internal const val NEW_LINE = "\n"
 internal const val SEMICONLON = ";"
 
+internal const val AS_PART = "as"
+internal const val IMPORT = "import"
+
 internal val NEW_LINE_SPLIT: Pattern = Pattern.compile(NEW_LINE)
