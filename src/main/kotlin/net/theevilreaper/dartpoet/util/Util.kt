@@ -18,7 +18,6 @@
  */
 package net.theevilreaper.dartpoet.util
 
-import net.theevilreaper.dartpoet.DartModifier
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.LinkedHashSet

@@ -5,7 +5,8 @@ import net.theevilreaper.dartpoet.annotation.AnnotationSpec
 import net.theevilreaper.dartpoet.code.CodeBlock
 
 /**
- * The builder is used to set all values that describe a property in Dart.
+ * The builder can be used to construct a parameter value for dart.
+ * Over the builder can be set different attributes.
  * @author theEvilReaper
  * @version 1.0.0
  * @since 1.0.0

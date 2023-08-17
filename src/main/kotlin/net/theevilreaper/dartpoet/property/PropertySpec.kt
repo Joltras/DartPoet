@@ -7,6 +7,7 @@ import net.theevilreaper.dartpoet.code.writer.PropertyWriter
 import net.theevilreaper.dartpoet.code.buildCodeString
 import net.theevilreaper.dartpoet.util.toImmutableSet
 import net.theevilreaper.dartpoet.util.ALLOWED_PROPERTY_MODIFIERS
+import net.theevilreaper.dartpoet.util.CONST_STRING
 import net.theevilreaper.dartpoet.util.hasAllowedModifiers
 
 /**
@@ -59,7 +60,11 @@ class PropertySpec(
 
         /**
          * Creates a new instance from the [PropertyBuilder].
-         * The modifier parameter is optional
+         * Note that the modifiers parameter is an optional parameter
+         * @param name the name for the property
+         * @param type the type for the property
+         * @param modifiers an [Array] of [DartModifier] for the property
+         * @return the created instance from the builder
          */
         @JvmStatic
         fun builder(
@@ -70,7 +75,12 @@ class PropertySpec(
             return PropertyBuilder(name, type).modifiers { listOf(*modifiers) }
         }
 
+        /**
+         * Creates a new [PropertyBuilder] which can be used to create const properties.
+         * @param name the name which should be used
+         * @return the created instance from the [PropertyBuilder]
+         */
         @JvmStatic
-        fun constBuilder(name: String) = PropertyBuilder(name, "CONST").modifier(DartModifier.CONST)
+        fun constBuilder(name: String) = PropertyBuilder(name, CONST_STRING).modifier(DartModifier.CONST)
     }
 }

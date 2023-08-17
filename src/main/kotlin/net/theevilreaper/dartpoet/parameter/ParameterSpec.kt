@@ -5,6 +5,12 @@ import net.theevilreaper.dartpoet.code.buildCodeString
 import net.theevilreaper.dartpoet.code.writer.ParameterWriter
 import net.theevilreaper.dartpoet.util.toImmutableSet
 
+/**
+ * A ParameterSpec represents the structure of a parameter from the language Dart.
+ * This class can be constructed over the [ParameterBuilder].
+ * @author theEvilReaper
+ * @since 1.0.0
+ */
 class ParameterSpec internal constructor(
     builder: ParameterBuilder
 ) {
@@ -25,6 +31,11 @@ class ParameterSpec internal constructor(
         }
     }
 
+    /**
+     * Converts a given [ParameterSpec] instance into a [ParameterBuilder].
+     * This method can be used to change attributes from an existing [ParameterSpec] object.
+     * @return the created builder instance
+     */
     fun toBuilder(): ParameterBuilder {
         val builder = ParameterBuilder(name, type)
         builder.named = isNamed
@@ -33,18 +44,17 @@ class ParameterSpec internal constructor(
         return builder
     }
 
-    internal fun write(
-        codeWriter: CodeWriter
-    ) {
-        ParameterWriter().write(this, codeWriter)
-    }
+    /**
+     * Triggers the write process to write the [ParameterSpec] into an [Appendable].
+     * @param codeWriter the writer instance to apply to the parameter
+     */
+    internal fun write(codeWriter: CodeWriter) { ParameterWriter().write(this, codeWriter) }
 
-    override fun toString() = buildCodeString {
-        write(
-            this,
-        )
-    }
-
+    /**
+     * Creates a textual representation from the [ParameterSpec] with the code format from dart.
+     * @return the created text representation
+      */
+    override fun toString() = buildCodeString { write(this) }
 
     companion object {
 

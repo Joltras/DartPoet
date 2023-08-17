@@ -21,6 +21,11 @@ import java.lang.Appendable
 import java.nio.file.Files
 import java.nio.file.Path
 
+/**
+ *
+ * @author theEvilReaper
+ * @since 1.0.0
+ */
 class DartFile internal constructor(
     builder: DartFileBuilder
 ) {
@@ -120,6 +125,11 @@ class DartFile internal constructor(
 
     companion object {
 
+        /**
+         * Creates a new instance from the [DartFileBuilder].
+         * @param name the name which should be used for the file
+         * @return the created instance
+         */
         @JvmStatic
         fun builder(name: String): DartFileBuilder {
             return DartFileBuilder(name)

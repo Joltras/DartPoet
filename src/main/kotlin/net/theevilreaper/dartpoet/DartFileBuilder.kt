@@ -10,6 +10,11 @@ import net.theevilreaper.dartpoet.property.PropertySpec
 import net.theevilreaper.dartpoet.util.DEFAULT_INDENT
 import net.theevilreaper.dartpoet.util.isIndent
 
+/**
+ *
+ * @author theEvilReaper
+ * @since 1.0.0
+ */
 class DartFileBuilder(
     val name: String
 ) {

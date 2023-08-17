@@ -6,6 +6,7 @@ import net.theevilreaper.dartpoet.DartModifier
 internal const val MAX_LINE_LENGTH = 80
 internal const val EMPTY_STRING = ""
 internal const val NULL_STRING = "null"
+internal const val CONST_STRING = "CONST"
 
 internal const val SPACE_CHAR = ' '
 internal const val SPACE = SPACE_CHAR.toString()
