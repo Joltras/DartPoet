@@ -31,7 +31,6 @@ enum class DartModifier(
     ON("on", ModifierTarget.CLASS),
     TYPEDEF("typedef", ModifierTarget.TYPEDEF),
     DYNAMIC("dynamic", ModifierTarget.PARAMETER),
-    REQUIRED("required", ModifierTarget.PARAMETER),
     VOID("void", ModifierTarget.INTERFACE, ModifierTarget.FUNCTION);
 
     /**
