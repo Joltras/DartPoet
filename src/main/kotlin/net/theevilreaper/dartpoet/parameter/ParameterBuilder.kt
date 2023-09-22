@@ -13,7 +13,6 @@ class ParameterBuilder internal constructor(
 
     internal val specData: SpecData = SpecData()
     internal var named: Boolean = false
-    internal var required: Boolean = false
     internal var nullable: Boolean = false
     internal var initializer: CodeBlock? = null
 
@@ -37,10 +36,6 @@ class ParameterBuilder internal constructor(
         this.nullable = nullable
     }
 
-    fun required(required: Boolean) = apply {
-        this.required = required
-    }
-
     override fun annotation(annotation: () -> AnnotationSpec) = apply {
         this.specData.annotations += annotation()
     }
@@ -62,7 +57,7 @@ class ParameterBuilder internal constructor(
     }
 
     override fun modifiers(vararg modifiers: DartModifier) = apply {
-        TODO("Not yet implemented")
+        this.specData.modifiers += modifiers
     }
 
     fun build(): ParameterSpec {
