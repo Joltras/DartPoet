@@ -14,11 +14,12 @@ enum class DartModifier(
     PRIVATE("_", ModifierTarget.FUNCTION, ModifierTarget.PROPERTY),
     STATIC("static", ModifierTarget.FUNCTION, ModifierTarget.PROPERTY),
     LATE("late", ModifierTarget.PROPERTY),
-    FINAL("final", ModifierTarget.PROPERTY),
+    FINAL("final", ModifierTarget.PROPERTY, ModifierTarget.PARAMETER),
     WITH("with", ModifierTarget.CLASS),
+    REQUIRED("required", ModifierTarget.PARAMETER),
 
     ASYNC("async", ModifierTarget.FUNCTION),
-    CONST("const", ModifierTarget.PROPERTY),
+    CONST("const", ModifierTarget.PROPERTY, ModifierTarget.PARAMETER),
 
     EXTENSION("extension", ModifierTarget.CLASS),
     ENUM("enum", ModifierTarget.CLASS),
