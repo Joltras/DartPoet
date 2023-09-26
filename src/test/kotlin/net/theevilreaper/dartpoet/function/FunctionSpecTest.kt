@@ -2,31 +2,39 @@ package net.theevilreaper.dartpoet.function
 
 import net.theevilreaper.dartpoet.DartModifier
 import net.theevilreaper.dartpoet.type.asTypeName
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-import kotlin.test.assertContentEquals
+import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
+import java.util.stream.Stream
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class FunctionSpecTest {
 
-    @Test
-    fun `create function with empty name`() {
-        assertThrows(
-            IllegalArgumentException::class.java,
-            { FunctionSpec.builder(" ").build() },
-            "The name of a function can't be empty"
+    companion object {
+
+        @JvmStatic
+        private fun invalidParameters() = Stream.of(
+            Arguments.of(
+                "The name of a function can't be empty",
+                { FunctionSpec.builder(" ").build() }
+            ),
+            Arguments.of(
+                "An abstract method can't have a body",
+                { FunctionSpec.builder("getName").modifier(DartModifier.ABSTRACT).addCode("%L", "value").build() }
+            ),
         )
     }
 
-    @Test
-    fun `create invalid abstract method`() {
-        assertThrows(
-            IllegalArgumentException::class.java,
-            { FunctionSpec.builder("getName").modifier(DartModifier.ABSTRACT).addCode("%L", "value").build() },
-            "An abstract method can't have a body"
-        )
+    @ParameterizedTest
+    @MethodSource("invalidParameters")
+    fun `test function creation which raise an exception due invalid data`(reason: String, parameter: () -> Unit) {
+        val exception = assertThrows<IllegalArgumentException> { parameter() }
+        Assertions.assertEquals(reason, exception.message)
     }
 
     @Test

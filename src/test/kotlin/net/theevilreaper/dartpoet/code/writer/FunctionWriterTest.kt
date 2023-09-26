@@ -210,4 +210,41 @@ class FunctionWriterTest {
             """.trimIndent()
         )
     }
+
+    @Test
+    fun `test method write with required parameters`() {
+        val method = FunctionSpec
+            .builder("apply")
+            .modifier { DartModifier.ABSTRACT }
+            .parameters {
+                listOf(
+                    ParameterSpec.builder("format", String::class).modifier { DartModifier.REQUIRED }.build(),
+                    ParameterSpec.builder("time", Int::class).modifier { DartModifier.REQUIRED }.build()
+                )
+            }.build()
+        assertThat(method.toString()).isEqualTo(
+            """
+            abstract void apply({required String format, required int time});
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `test method write with required parameters and normal parameters`() {
+        val method = FunctionSpec
+            .builder("apply")
+            .modifier { DartModifier.ABSTRACT }
+            .parameters {
+                listOf(
+                    ParameterSpec.builder("format", String::class).modifier { DartModifier.REQUIRED }.build(),
+                    ParameterSpec.builder("time", Int::class).modifier { DartModifier.REQUIRED }.build(),
+                    ParameterSpec.builder("return", Boolean::class).build()
+                )
+            }.build()
+        assertThat(method.toString()).isEqualTo(
+            """
+            abstract void apply({required String format, required int time}, [bool value = false], String hal);
+            """.trimIndent()
+        )
+    }
 }
