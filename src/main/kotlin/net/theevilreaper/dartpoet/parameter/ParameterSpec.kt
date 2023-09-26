@@ -47,8 +47,13 @@ class ParameterSpec internal constructor(
             val forbiddenModifiers = this.modifiers.filter { it !in ALLOWED_PARAMETER_KEY_WORDS }.toSet()
             throw IllegalArgumentException("Received invalid keywords $forbiddenModifiers. Allowed keywords for parameters are $ALLOWED_PARAMETER_KEY_WORDS")
         }
-        if (type != null) {
-            check(type.trim().isNotEmpty()) { "The type can't be empty" }
+
+        if (!isRequired && this.modifiers.contains(DartModifier.CONST) && this.modifiers.size != 1) {
+            throw IllegalArgumentException("When a parameter should be const no other modifiers are allowed")
+        }
+
+        if (isRequired && this.modifiers.contains(DartModifier.CONST)) {
+            throw IllegalArgumentException("The required keyword can't be used in combination with const")
         }
     }
 

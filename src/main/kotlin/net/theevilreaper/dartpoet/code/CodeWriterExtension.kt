@@ -117,8 +117,10 @@ internal fun List<ParameterSpec>.emitParameters(
         emit("(")
     }
     if (isNotEmpty()) {
+        val namedParameters = filter { it.isNamed || it.isRequired }.toList()
         val emitComma = size > 1
         forEachIndexed { index, parameter ->
+            if (parameter in namedParameters) return@forEachIndexed
             if (index > 0 && forceNewLines)  {
                 emit(NEW_LINE)
             }
@@ -132,6 +134,25 @@ internal fun List<ParameterSpec>.emitParameters(
                     emit(SPACE)
                 }
             }
+        }
+
+        if (namedParameters.isNotEmpty()) {
+            emit("{")
+
+            val withComma = namedParameters.size > 1
+            namedParameters.forEachIndexed { index, parameterSpec ->
+                emitBlock(parameterSpec)
+                if (withComma) {
+                    if (index < size - 1) {
+                        emit(",")
+                    }
+                    if (emitSpace && index < size - 1) {
+                        emit(SPACE)
+                    }
+                }
+            }
+
+            emit("}")
         }
     }
     if (emitBrackets) {

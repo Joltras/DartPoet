@@ -23,12 +23,10 @@ import net.theevilreaper.dartpoet.util.toImmutableSet
 class FunctionSpec(
     builder: FunctionBuilder
 ) {
-
     internal val name = builder.name
     internal val returnType: TypeName? = builder.returnType
     internal val body: CodeBlock = builder.body.build()
     internal val parameters: List<ParameterSpec> = builder.parameters.toImmutableList()
-    internal val isAsync: Boolean = builder.async
     internal val annotation: Set<AnnotationSpec> = builder.specData.annotations.toImmutableSet()
     internal var modifiers: Set<DartModifier> = builder.specData.modifiers.also {
         hasAllowedModifiers(it, ALLOWED_FUNCTION_MODIFIERS, "function")
@@ -39,13 +37,13 @@ class FunctionSpec(
     internal val asSetter = builder.setter
     internal val isGetter = builder.getter
     internal val isLambda = builder.lambda
+    internal val isAsync = builder.async
     internal val docs = builder.docs
     internal val hasDocs = builder.docs.isNotEmpty()
-
-    private val namedParameters: Set<ParameterSpec> = if (parameters.isEmpty()) {
+    internal val namedParameters: Set<ParameterSpec> = if (parameters.isEmpty()) {
         setOf()
     } else {
-        parameters.filter { it.isNamed }.toSet()
+        parameters.filter { it.isNamed || it.isRequired }.toSet()
     }
 
     init {
