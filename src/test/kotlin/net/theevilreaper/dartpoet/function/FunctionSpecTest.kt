@@ -1,6 +1,7 @@
 package net.theevilreaper.dartpoet.function
 
 import net.theevilreaper.dartpoet.DartModifier
+import net.theevilreaper.dartpoet.parameter.ParameterSpec
 import net.theevilreaper.dartpoet.type.asTypeName
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -50,5 +51,18 @@ class FunctionSpecTest {
         assertFalse { specAsBuilder.async }
         assertTrue { specAsBuilder.returnType!!.isNullable }
         assertTrue { specAsBuilder.body.isNotEmpty() }
+    }
+
+    @Test
+    fun `test function which has a invalid combination of parameters`() {
+        val functionSpec = FunctionSpec.builder("test")
+            .parameters {
+                listOf(
+                    ParameterSpec.builder("name", String::class).build(),
+                    ParameterSpec.builder("age", Int::class).initializer("%L", "10").build()
+                )
+            }
+        val exception = assertThrows<IllegalArgumentException> { functionSpec.build()  }
+        assertEquals("A function can't have required parameters and some which have a default value", exception.message)
     }
 }
