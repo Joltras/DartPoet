@@ -20,15 +20,12 @@ class FunctionWriter {
         }
 
         val writeableModifiers = functionSpec.modifiers.filter { it != PRIVATE && it != PUBLIC }.toImmutableSet()
-
         if (writeableModifiers.isNotEmpty()) {
             for (modifier in writeableModifiers) {
                 writer.emit(modifier.identifier)
                 writer.emit("·")
             }
         }
-
-
 
         if (functionSpec.returnType == null) {
             if (functionSpec.isAsync) {
@@ -64,18 +61,31 @@ class FunctionWriter {
         if (functionSpec.isGetter) {
             writer.emit("·=>·")
             writer.emitCode(functionSpec.body.returnsWithoutLinebreak(), ensureTrailingNewline = false)
-        } else {
-            functionSpec.parameters.emitParameters(writer) {
-                it.write(writer)
-            }
-
-            writeBody(functionSpec, writer)
+            return;
         }
+
+        val hasAdditionalParameters = functionSpec.namedParameters.isEmpty() && functionSpec.parameterWithDefaults.isEmpty()
+
+        println("Sized from normal are ${functionSpec.parameterWithDefaults.size}")
+        functionSpec.normalParameters.emitParameters(writer, openBracket = "(", closingBracket = ")", emitCloseBrackets = hasAdditionalParameters)
+
+        if (!hasAdditionalParameters) {
+            writer.emit(", ")
+        }
+
+        if (functionSpec.namedParameters.isNotEmpty()) {
+            functionSpec.namedParameters.emitParameters(writer, openBracket = "{", closingBracket = "})")
+        }
+
+        if (functionSpec.parameterWithDefaults.isNotEmpty()) {
+            functionSpec.parameterWithDefaults.emitParameters(writer, openBracket = "[", closingBracket = "])")
+        }
+        writeBody(functionSpec, writer)
     }
 
     private fun writeBody(spec: FunctionSpec, writer: CodeWriter) {
         if (spec.body.isEmpty()) {
-            writer.emit(SEMICOLON)
+            writer.emit(if (ABSTRACT in spec.modifiers) ";" else " { }")
             return
         }
         if (spec.isAsync) {
@@ -102,6 +112,8 @@ class FunctionWriter {
         spec.parameters.emitParameters(
             codeWriter,
             emitBrackets = spec.parameters.isNotEmpty(),
+            openBracket = "(",
+            closingBracket = ")",
             forceNewLines = false
         ) {
             it.write(codeWriter)
