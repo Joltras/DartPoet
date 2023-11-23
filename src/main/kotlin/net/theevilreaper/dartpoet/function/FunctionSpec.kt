@@ -43,7 +43,12 @@ class FunctionSpec(
     internal val namedParameters: Set<ParameterSpec> = if (parameters.isEmpty()) {
         setOf()
     } else {
-        parameters.filter { it.isNamed || it.isRequired }.toSet()
+        parameters.filter { it.isNamed || (it.isNamed && it.initializer != null && !it.initializer.isNotEmpty())}.toImmutableSet()
+    }
+    internal val parameterWithDefaults: Set<ParameterSpec> = if (parameters.isEmpty()) {
+        setOf()
+    } else {
+       parameters.filter { it.initializer != null && it.initializer.isNotEmpty() }.toImmutableSet()
     }
 
     init {
@@ -57,6 +62,10 @@ class FunctionSpec(
 
         if (isLambda && body.isEmpty()) {
             throw IllegalArgumentException("Lambda can only be used with a body")
+        }
+
+        if (namedParameters.isNotEmpty() && parameters.isNotEmpty()) {
+            throw IllegalArgumentException("A function can't have required parameters and some which have a default value")
         }
 
         //require (isFactory && returnType == null && !isNullable) { "A void function can't be nullable" }
