@@ -1,6 +1,7 @@
 package net.theevilreaper.dartpoet.classTypes
 
 import com.google.common.truth.Truth.*
+import net.theevilreaper.dartpoet.DartModifier
 import net.theevilreaper.dartpoet.annotation.AnnotationSpec
 import net.theevilreaper.dartpoet.clazz.ClassSpec
 import net.theevilreaper.dartpoet.function.FunctionSpec
@@ -16,6 +17,7 @@ class AbstractClassTest {
             .endWithNewLine(true)
             .function(
                 FunctionSpec.builder("getByID")
+                    .modifier { DartModifier.ABSTRACT }
                     .returns(ClassName("TestModel"))
                     .parameter(ParameterSpec.builder("id", Int::class).build())
                     .build()
@@ -27,9 +29,9 @@ class AbstractClassTest {
             """
             abstract class DatabaseHandler {
             
-              TestModel getByID(int id);
+              abstract TestModel getByID(int id);
             
-              void test();
+              void test() { }
             }
             
             """.trimIndent()
@@ -39,17 +41,18 @@ class AbstractClassTest {
     @Test
     fun `test abstract class with annotation`() {
         val abstractClass = ClassSpec.abstractClass("Test")
-            .annotation(
-                AnnotationSpec.builder("abc").build()
+            .annotation(AnnotationSpec.builder("abc").build())
+            .function(
+                FunctionSpec.builder("test")
+                    .build()
             )
-            .function(FunctionSpec.builder("test").build())
             .build()
         assertThat(abstractClass.toString()).isEqualTo(
             """
             @abc
             abstract class Test {
             
-              void test();
+              void test() { }
             }
             """.trimIndent()
         )

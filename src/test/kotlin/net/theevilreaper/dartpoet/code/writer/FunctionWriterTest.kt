@@ -19,7 +19,7 @@ class FunctionWriterTest {
         val method = FunctionSpec.builder("test")
             .returns(Void::class)
             .build()
-        assertThat(method.toString()).isEqualTo("void test();")
+        assertThat(method.toString()).isEqualTo("void test() { }")
     }
 
     @Test
@@ -123,7 +123,7 @@ class FunctionWriterTest {
             .build()
         assertThat(method.toString()).isEqualTo(
             """
-            List<Model> getAllById(String id, int amount);
+            List<Model> getAllById(String id, int amount) { }
             """.trimIndent()
         )
     }
@@ -148,7 +148,7 @@ class FunctionWriterTest {
             .returns(Int::class)
             .typeCast("int")
             .build()
-        assertThat(function.toString()).isEqualTo("int getId<int>();")
+        assertThat(function.toString()).isEqualTo("int getId<int>() { }")
     }
 
     @Test
@@ -230,20 +230,20 @@ class FunctionWriterTest {
     }
 
     @Test
-    fun `test method write with required parameters and normal parameters`() {
+    fun `test method parameter with normal and some with a default value`() {
         val method = FunctionSpec
-            .builder("apply")
-            .modifier { DartModifier.ABSTRACT }
+            .builder("setData")
             .parameters {
                 listOf(
-                    ParameterSpec.builder("format", String::class).modifier { DartModifier.REQUIRED }.build(),
-                    ParameterSpec.builder("time", Int::class).modifier { DartModifier.REQUIRED }.build(),
-                    ParameterSpec.builder("return", Boolean::class).build()
+                    ParameterSpec.builder("name", String::class).build(),
+                    ParameterSpec.builder("city", String::class).build(),
+                    ParameterSpec.builder("age", Int::class).initializer("%L", 10).build()
                 )
-            }.build()
+            }
+            .build()
         assertThat(method.toString()).isEqualTo(
             """
-            abstract void apply({required String format, required int time}, [bool value = false], String hal);
+            void setData(String name, String city, [int age = 10]) { }
             """.trimIndent()
         )
     }
