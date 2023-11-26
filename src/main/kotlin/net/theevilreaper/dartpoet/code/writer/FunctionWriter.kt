@@ -64,23 +64,30 @@ class FunctionWriter {
             return;
         }
 
-        val hasAdditionalParameters = functionSpec.namedParameters.isEmpty() && functionSpec.parameterWithDefaults.isEmpty()
+        if (functionSpec.parameters.isEmpty()) {
+            writer.emit("()")
+        } else {
+            emitParameters(functionSpec, writer)
+        }
+        writeBody(functionSpec, writer)
+    }
 
-        println("Sized from normal are ${functionSpec.parameterWithDefaults.size}")
-        functionSpec.normalParameters.emitParameters(writer, openBracket = "(", closingBracket = ")", emitCloseBrackets = hasAdditionalParameters)
+    private fun emitParameters(spec: FunctionSpec, writer: CodeWriter) {
+        val hasAdditionalParameters = spec.namedParameters.isEmpty() && spec.parameterWithDefaults.isEmpty()
+
+        spec.normalParameters.emitParameters(writer, openBracket = "(", closingBracket = ")", emitCloseBrackets = hasAdditionalParameters)
 
         if (!hasAdditionalParameters) {
             writer.emit(", ")
         }
 
-        if (functionSpec.namedParameters.isNotEmpty()) {
-            functionSpec.namedParameters.emitParameters(writer, openBracket = "{", closingBracket = "})")
+        if (spec.namedParameters.isNotEmpty()) {
+            spec.namedParameters.emitParameters(writer, openBracket = "{", closingBracket = "})")
         }
 
-        if (functionSpec.parameterWithDefaults.isNotEmpty()) {
-            functionSpec.parameterWithDefaults.emitParameters(writer, openBracket = "[", closingBracket = "])")
+        if (spec.parameterWithDefaults.isNotEmpty()) {
+            spec.parameterWithDefaults.emitParameters(writer, openBracket = "[", closingBracket = "])")
         }
-        writeBody(functionSpec, writer)
     }
 
     private fun writeBody(spec: FunctionSpec, writer: CodeWriter) {

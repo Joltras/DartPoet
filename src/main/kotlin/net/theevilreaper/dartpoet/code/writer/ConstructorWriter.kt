@@ -36,29 +36,9 @@ class ConstructorWriter {
 
         writer.emit("(")
 
-        spec.parameters.emitParameters(writer, emitBrackets = false) {
+        spec.parameters.emitParameters(writer, emitBrackets = false, openBracket = "(", closingBracket = ")") {
             it.write(writer)
         }
-
-        if (spec.hasNamedParameters) {
-            if (spec.parameters.isNotEmpty()) {
-                writer.emit(",$NEW_LINE")
-            }
-            writer.emit("$CURLY_OPEN")
-            writer.emit(NEW_LINE)
-            writer.indent()
-
-            spec.requiredAndNamedParameters.emitParameters(writer, emitBrackets = false, emitSpace = false, forceNewLines = true) {
-                it.write(writer)
-            }
-
-            writer.unindent()
-            writer.emit(NEW_LINE)
-            writer.emit("$CURLY_CLOSE")
-        }
-
-
-        writer.emit(")")
 
         if (spec.isLambda) {
             writer.emit("·=>$NEW_LINE")
