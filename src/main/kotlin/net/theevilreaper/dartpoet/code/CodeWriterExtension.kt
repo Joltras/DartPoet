@@ -106,59 +106,46 @@ internal fun Set<ConstructorSpec>.emitConstructors(
     }
 }
 
+
 internal fun List<ParameterSpec>.emitParameters(
     codeWriter: CodeWriter,
+    openBracket: String,
+    closingBracket: String,
     forceNewLines: Boolean = false,
     emitBrackets: Boolean = true,
+    emitCloseBrackets: Boolean = true,
     emitSpace: Boolean = true,
     emitBlock: (ParameterSpec) -> Unit = { it.write(codeWriter) }
 ) = with(codeWriter) {
+    check(openBracket.trim().isNotEmpty()) { "The open bracket string can't be empty" }
+    check(closingBracket.trim().isNotEmpty()) { "The closing bracket string can't be empty" }
+    println("CloseBracket is $emitCloseBrackets")
+    if (isEmpty()) return@with
     if (emitBrackets) {
-        emit("(")
+        emit(openBracket)
     }
-    if (isNotEmpty()) {
-        val namedParameters = filter { it.isNamed || it.isRequired }.toList()
-        val emitComma = size > 1
-        forEachIndexed { index, parameter ->
-            if (parameter in namedParameters) return@forEachIndexed
-            if (index > 0 && forceNewLines)  {
-                emit(NEW_LINE)
-            }
 
-            emitBlock(parameter)
-            if (emitComma) {
-                if (index < size - 1) {
-                    emit(",")
-                }
-                if (emitSpace && index < size - 1) {
-                    emit(SPACE)
-                }
-            }
+    val emitComma = size > 1
+    forEachIndexed { index, parameter ->
+        if (index > 0 && forceNewLines) {
+            emit(NEW_LINE)
         }
 
-        if (namedParameters.isNotEmpty()) {
-            emit("{")
-
-            val withComma = namedParameters.size > 1
-            namedParameters.forEachIndexed { index, parameterSpec ->
-                emitBlock(parameterSpec)
-                if (withComma) {
-                    if (index < size - 1) {
-                        emit(",")
-                    }
-                    if (emitSpace && index < size - 1) {
-                        emit(SPACE)
-                    }
-                }
+        emitBlock(parameter)
+        if (emitComma) {
+            if (index < size - 1) {
+                emit(",")
             }
-
-            emit("}")
+            if (emitSpace && index < size - 1) {
+                emit(SPACE)
+            }
         }
     }
-    if (emitBrackets) {
-        emit(")")
+    if (emitCloseBrackets) {
+        emit(closingBracket)
     }
 }
+
 
 internal fun List<ExtensionSpec>.emitExtensions(
     codeWriter: CodeWriter,
