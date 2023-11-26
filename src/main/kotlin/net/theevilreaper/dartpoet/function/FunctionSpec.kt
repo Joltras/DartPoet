@@ -26,6 +26,7 @@ class FunctionSpec(
     internal val name = builder.name
     internal val returnType: TypeName? = builder.returnType
     internal val body: CodeBlock = builder.body.build()
+    // TODO: Remove this variable in a later commit
     internal val parameters: List<ParameterSpec> = builder.parameters.toImmutableList()
     internal val annotation: Set<AnnotationSpec> = builder.specData.annotations.toImmutableSet()
     internal var modifiers: Set<DartModifier> = builder.specData.modifiers.also {
@@ -40,15 +41,22 @@ class FunctionSpec(
     internal val isAsync = builder.async
     internal val docs = builder.docs
     internal val hasDocs = builder.docs.isNotEmpty()
-    internal val namedParameters: Set<ParameterSpec> = if (parameters.isEmpty()) {
-        setOf()
+    internal val normalParameters: List<ParameterSpec> = if (builder.parameters.isEmpty()) {
+        listOf()
     } else {
-        parameters.filter { it.isNamed || (it.isNamed && it.initializer != null && !it.initializer.isNotEmpty())}.toImmutableSet()
+        builder.parameters.filter {
+            !it.isNamed && it.initializer == null
+        }.toImmutableList()
     }
-    internal val parameterWithDefaults: Set<ParameterSpec> = if (parameters.isEmpty()) {
-        setOf()
+    internal val namedParameters: List<ParameterSpec> = if (builder.parameters.isEmpty()) {
+        listOf()
     } else {
-       parameters.filter { it.initializer != null && it.initializer.isNotEmpty() }.toImmutableSet()
+        builder.parameters.filter { it.isNamed || (it.isNamed && it.initializer != null && !it.initializer.isNotEmpty())}.toImmutableList()
+    }
+    internal val parameterWithDefaults: List<ParameterSpec> = if (builder.parameters.isEmpty()) {
+        listOf()
+    } else {
+        builder.parameters.filter { it.initializer != null && it.initializer.isNotEmpty() }.toImmutableList()
     }
 
     init {
@@ -64,7 +72,7 @@ class FunctionSpec(
             throw IllegalArgumentException("Lambda can only be used with a body")
         }
 
-        if (namedParameters.isNotEmpty() && parameters.isNotEmpty()) {
+        if (namedParameters.isNotEmpty() && builder.parameters.isNotEmpty()) {
             throw IllegalArgumentException("A function can't have required parameters and some which have a default value")
         }
 
@@ -94,7 +102,7 @@ class FunctionSpec(
         builder.returnType = this.returnType
         builder.annotations(*this.annotation.toTypedArray())
         builder.modifiers(*this.modifiers.toTypedArray())
-        builder.parameters.addAll(this.parameters)
+        builder.parameters.addAll(this.namedParameters.plus(this.normalParameters).plus(this.parameterWithDefaults))
         builder.async = this.isAsync
         builder.typedef = this.isTypeDef
         builder.typeCast = this.typeCast
